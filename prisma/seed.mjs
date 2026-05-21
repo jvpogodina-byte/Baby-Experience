@@ -683,7 +683,6 @@ async function seedAdminUser() {
       role: "ADMIN"
     },
     create: {
-      id: "seed-user-admin",
       email,
       name: "Admin",
       passwordHash,
@@ -721,7 +720,14 @@ async function seedCategories() {
         hero: category.hero,
         order: category.order
       },
-      create: category
+      create: {
+        slug: category.slug,
+        name: category.name,
+        description: category.description,
+        accent: category.accent,
+        hero: category.hero,
+        order: category.order
+      }
     });
   }
 }
@@ -772,7 +778,6 @@ async function seedItems() {
         status: "PUBLISHED"
       },
       create: {
-        id: item.id,
         slug: item.slug,
         title: item.title,
         summary: item.summary,
