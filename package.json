@@ -14,6 +14,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:seed": "prisma db seed",
+    "catalog:import-production": "node scripts/import-catalog-to-production.mjs",
     "postinstall": "prisma generate"
   },
   "prisma": {
