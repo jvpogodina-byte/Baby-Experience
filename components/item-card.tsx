@@ -95,7 +95,7 @@ export function ItemCard({ item }: Props) {
             aria-expanded={examplesOpen}
             onClick={() => setExamplesOpen((isOpen) => !isOpen)}
           >
-            Где посмотреть
+            Примеры
           </button>
         ) : null}
         {hasPhotoHint ? (
