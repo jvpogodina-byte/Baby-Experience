@@ -53,7 +53,7 @@ const categories = [
   {
     id: "seed-category-not-needed",
     slug: "not-needed",
-    name: "Это можно не покупать",
+    name: "Антипокупки",
     description: "Вещи, которые я бы не относила к обязательным покупкам на старт.",
     accent: "sky",
     hero: "Без лишних покупок",
