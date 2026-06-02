@@ -687,6 +687,31 @@ select {
   color: #245f9e;
 }
 
+.category-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.category-toolbar label {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.category-toolbar select {
+  min-width: 190px;
+  border: 1px solid rgba(20, 49, 47, 0.14);
+  border-radius: var(--radius-sm);
+  padding: 0.68rem 0.85rem;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(14, 53, 45, 0.08);
+}
+
 .empty-state {
   padding: 1.2rem;
   border: 1px solid var(--line);
