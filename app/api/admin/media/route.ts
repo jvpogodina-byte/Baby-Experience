@@ -231,6 +231,13 @@ export async function POST(request: Request) {
   const dimensions = readImageDimensions(bytes, file.type);
   const token = process.env.BLOB_READ_WRITE_TOKEN;
 
+  if (!token && process.env.VERCEL === "1") {
+    return errorResponse(
+      "Загрузка файлов на Vercel требует BLOB_READ_WRITE_TOKEN. Добавьте Vercel Blob Store и переменную окружения, затем сделайте redeploy.",
+      500
+    );
+  }
+
   try {
     const storedFile = token
       ? await put(
