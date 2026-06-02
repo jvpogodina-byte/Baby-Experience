@@ -73,6 +73,50 @@ async function ensureItemSlugIsUnique(slug: string, currentId?: string) {
   return !item || item.id === currentId;
 }
 
+async function buildItemCategoryLinks(categoryIds: string[], itemId?: string) {
+  const existingLinks = itemId
+    ? await prisma.itemCategory.findMany({
+        where: {
+          itemId,
+          categoryId: {
+            in: categoryIds
+          }
+        },
+        select: {
+          categoryId: true,
+          order: true
+        }
+      })
+    : [];
+  const existingOrderByCategoryId = new Map(existingLinks.map((link) => [link.categoryId, link.order]));
+  const categoryMaxOrders = await prisma.itemCategory.groupBy({
+    by: ["categoryId"],
+    where: {
+      categoryId: {
+        in: categoryIds
+      },
+      ...(itemId
+        ? {
+            itemId: {
+              not: itemId
+            }
+          }
+        : {})
+    },
+    _max: {
+      order: true
+    }
+  });
+  const maxOrderByCategoryId = new Map(
+    categoryMaxOrders.map((entry) => [entry.categoryId, entry._max.order ?? -1])
+  );
+
+  return categoryIds.map((categoryId) => ({
+    categoryId,
+    order: existingOrderByCategoryId.get(categoryId) ?? (maxOrderByCategoryId.get(categoryId) ?? -1) + 1
+  }));
+}
+
 function readCategoryPayload(formData: FormData) {
   const errors: Record<string, string> = {};
   const name = readString(formData, "name");
@@ -179,6 +223,64 @@ export async function deleteCategoryAction(_state: AdminActionState, formData: F
   redirect("/admin/categories?deleted=1");
 }
 
+export async function updateCategoryItemOrderAction(formData: FormData) {
+  await requireAdmin();
+
+  const categoryId = readString(formData, "categoryId");
+  const rawOrder = readString(formData, "itemOrder");
+  if (!categoryId || !rawOrder) {
+    redirect(`/admin/categories/${categoryId}`);
+  }
+
+  let itemIds: string[] = [];
+  try {
+    const parsed = JSON.parse(rawOrder);
+    if (Array.isArray(parsed)) {
+      itemIds = parsed.filter((id): id is string => typeof id === "string" && id.length > 0);
+    }
+  } catch {
+    itemIds = [];
+  }
+
+  const category = await prisma.category.findUnique({
+    where: { id: categoryId },
+    select: { slug: true }
+  });
+
+  if (!category) {
+    redirect("/admin/categories");
+  }
+
+  const existingLinks = await prisma.itemCategory.findMany({
+    where: { categoryId },
+    select: { itemId: true }
+  });
+  const existingItemIds = new Set(existingLinks.map((link) => link.itemId));
+  const uniqueOrderedIds = Array.from(new Set(itemIds)).filter((itemId) => existingItemIds.has(itemId));
+
+  await prisma.$transaction(
+    uniqueOrderedIds.map((itemId, index) =>
+      prisma.itemCategory.update({
+        where: {
+          itemId_categoryId: {
+            itemId,
+            categoryId
+          }
+        },
+        data: {
+          order: index
+        }
+      })
+    )
+  );
+
+  revalidatePath("/");
+  revalidatePath("/categories");
+  revalidatePath(`/categories/${category.slug}`);
+  revalidatePath(`/admin/categories/${categoryId}`);
+  redirect(`/admin/categories/${categoryId}?order=saved`);
+}
+
 function readItemPayload(formData: FormData, defaultStatus: PublishStatus) {
   const errors: Record<string, string> = {};
   const title = readString(formData, "title");
@@ -231,13 +333,14 @@ export async function createItemAction(_state: AdminActionState, formData: FormD
   }
 
   let itemId = "";
+  const categoryLinks = await buildItemCategoryLinks(categoryIds);
 
   try {
     const item = await prisma.item.create({
       data: {
         ...data,
         categories: {
-          create: categoryIds.map((categoryId) => ({ categoryId }))
+          create: categoryLinks
         }
       },
       select: { id: true }
@@ -269,6 +372,8 @@ export async function updateItemAction(_state: AdminActionState, formData: FormD
     return { errors: { slug: "Вещь с таким slug уже существует." }, message: "Проверьте slug." };
   }
 
+  const categoryLinks = await buildItemCategoryLinks(categoryIds, id);
+
   try {
     await prisma.item.update({
       where: { id },
@@ -276,7 +381,7 @@ export async function updateItemAction(_state: AdminActionState, formData: FormD
         ...data,
         categories: {
           deleteMany: {},
-          create: categoryIds.map((categoryId) => ({ categoryId }))
+          create: categoryLinks
         }
       }
     });

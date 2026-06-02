@@ -766,6 +766,7 @@ async function getItemIdsBySlug(slugs) {
 
 async function seedItems() {
   const categoryIdsBySlug = await getCategoryIdsBySlug();
+  const nextOrderByCategorySlug = new Map();
 
   for (const item of items) {
     const itemRecord = await prisma.item.upsert({
@@ -791,11 +792,19 @@ async function seedItems() {
       where: { itemId: itemRecord.id }
     });
 
-    await prisma.itemCategory.createMany({
-      data: item.categorySlugs.map((categorySlug) => ({
+    const itemCategories = item.categorySlugs.map((categorySlug) => {
+      const order = nextOrderByCategorySlug.get(categorySlug) ?? 0;
+      nextOrderByCategorySlug.set(categorySlug, order + 1);
+
+      return {
         itemId: itemRecord.id,
-        categoryId: requireMappedId(categoryIdsBySlug, categorySlug, "category")
-      })),
+        categoryId: requireMappedId(categoryIdsBySlug, categorySlug, "category"),
+        order
+      };
+    });
+
+    await prisma.itemCategory.createMany({
+      data: itemCategories,
       skipDuplicates: true
     });
 

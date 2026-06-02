@@ -124,13 +124,18 @@ async function importItems(categoryIdsBySourceId) {
       where: { itemId: imported.id }
     });
 
-    const categoryLinks = item.categories
-      .map((link) => categoryIdsBySourceId.get(link.categoryId))
-      .filter(Boolean)
-      .map((categoryId) => ({
-        itemId: imported.id,
-        categoryId
-      }));
+    const categoryLinks = item.categories.flatMap((link) => {
+      const categoryId = categoryIdsBySourceId.get(link.categoryId);
+      return categoryId
+        ? [
+            {
+              itemId: imported.id,
+              categoryId,
+              order: link.order ?? 0
+            }
+          ]
+        : [];
+    });
 
     if (categoryLinks.length) {
       await target.itemCategory.createMany({

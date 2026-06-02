@@ -45,6 +45,7 @@ export type CatalogItem = {
   summary: string;
   previewImageUrl?: string;
   categorySlugs: string[];
+  categoryOrders: Record<string, number>;
   categories: CatalogItemCategory[];
   featured: boolean;
   examples: CatalogItemExample[];
@@ -143,12 +144,12 @@ function mapExampleKind(kind: ExampleKind): CatalogItemExample["kind"] {
 
 function mapItem(item: CatalogItemRecord): CatalogItem {
   const categories = item.categories
-    .map(({ category }) => category)
-    .sort((first, second) => first.order - second.order)
-    .map((category) => ({
+    .sort((first, second) => first.category.order - second.category.order)
+    .map(({ category }) => ({
       slug: category.slug,
       name: category.name
     }));
+  const categoryOrders = Object.fromEntries(item.categories.map(({ category, order }) => [category.slug, order]));
 
   const examples = item.examples.map((example) => ({
     id: example.id,
@@ -166,6 +167,7 @@ function mapItem(item: CatalogItemRecord): CatalogItem {
     summary: item.summary,
     previewImageUrl: item.previewImageUrl ?? undefined,
     categorySlugs: categories.map((category) => category.slug),
+    categoryOrders,
     categories,
     featured: item.featured,
     examples,
@@ -208,6 +210,7 @@ function mapFallbackItem(item: FallbackItem): CatalogItem {
     summary: item.summary,
     previewImageUrl: item.previewImageUrl ?? item.example.imageUrl,
     categorySlugs: item.categorySlugs,
+    categoryOrders: Object.fromEntries(item.categorySlugs.map((slug, index) => [slug, index])),
     categories,
     featured: Boolean(item.featured),
     examples,

@@ -687,31 +687,6 @@ select {
   color: #245f9e;
 }
 
-.category-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.category-toolbar label {
-  color: var(--muted);
-  font-size: 0.85rem;
-  font-weight: 800;
-}
-
-.category-toolbar select {
-  min-width: 190px;
-  border: 1px solid rgba(20, 49, 47, 0.14);
-  border-radius: var(--radius-sm);
-  padding: 0.68rem 0.85rem;
-  background: rgba(255, 255, 255, 0.78);
-  color: var(--text);
-  font-weight: 800;
-  box-shadow: 0 10px 24px rgba(14, 53, 45, 0.08);
-}
-
 .empty-state {
   padding: 1.2rem;
   border: 1px solid var(--line);
@@ -1007,6 +982,57 @@ select {
 
 .admin-row strong,
 .admin-row .subtle {
+  display: block;
+}
+
+.sortable-list {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.sortable-row {
+  display: grid;
+  grid-template-columns: auto auto 56px minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.75rem;
+  border: 1px solid rgba(20, 49, 47, 0.1);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.58);
+  cursor: grab;
+  transition: border-color 160ms ease, opacity 160ms ease, transform 160ms ease;
+}
+
+.sortable-row:hover {
+  border-color: rgba(45, 108, 223, 0.28);
+  transform: translateY(-1px);
+}
+
+.sortable-row.dragging {
+  opacity: 0.55;
+}
+
+.drag-handle {
+  color: var(--muted);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.sortable-index {
+  min-width: 2ch;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.sortable-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: rgba(20, 49, 47, 0.08);
+}
+
+.empty-thumb {
   display: block;
 }
 

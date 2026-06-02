@@ -114,6 +114,7 @@ model Item {
 model ItemCategory {
   itemId     String
   categoryId String
+  order      Int      @default(0)
   item       Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
