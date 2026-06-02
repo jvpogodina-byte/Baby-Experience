@@ -27,7 +27,7 @@ export default async function AdminItemsPage({ searchParams }: Props) {
         }
       }
     },
-    orderBy: [{ updatedAt: "desc" }, { title: "asc" }]
+    orderBy: { title: "asc" }
   });
 
   return (
