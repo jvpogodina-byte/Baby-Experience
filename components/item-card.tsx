@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import type { CatalogItem } from "@/lib/catalog";
@@ -89,9 +88,6 @@ export function ItemCard({ item }: Props) {
         ) : null}
       </div>
       <div className="item-list-actions">
-        <Link className="button secondary item-list-link" href={`/items/${item.slug}`}>
-          Открыть
-        </Link>
         {purchaseLinks.length ? (
           <button
             type="button"
