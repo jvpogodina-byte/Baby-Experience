@@ -28,7 +28,7 @@ export default async function HomePage() {
           <div className="hero-aside">
             <div className="metric">
               <strong>{categories.length}</strong>
-              <span>категорий и отдельных подборок: мама, малыш, дом, прогулки, путешествия, можно не покупать, бюджет без ограничений</span>
+              <span>категорий и отдельных подборок: мама, малыш, дом, прогулки, путешествия, антипокупки, бюджет без ограничений</span>
             </div>
             <div className="metric">
               <strong>&gt;50</strong>
