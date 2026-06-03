@@ -39,7 +39,7 @@ export default async function HomePage() {
               <span>спокойный родитель, который понимает, что пригодится именно ему</span>
             </div>
             <div className="hero-actions aside-actions">
-              <Link className="button" href="#categories">
+              <Link className="button" href="/categories">
                 Смотреть подборки
               </Link>
             </div>
