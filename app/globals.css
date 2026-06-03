@@ -129,6 +129,20 @@ select {
   transform: translateY(-1px);
 }
 
+.nav a.nav-link-primary {
+  border: 1px solid rgba(45, 108, 223, 0.24);
+  background: linear-gradient(135deg, rgba(45, 108, 223, 0.16), rgba(46, 159, 107, 0.18));
+  color: #245f9e;
+  font-weight: 900;
+  box-shadow: 0 12px 28px rgba(45, 108, 223, 0.12);
+}
+
+.nav a.nav-link-primary:hover {
+  background: linear-gradient(135deg, #2d6cdf, #2e9f6b);
+  color: white;
+  box-shadow: 0 16px 32px rgba(45, 108, 223, 0.22);
+}
+
 .nav-icon-link {
   width: 2.4rem;
   height: 2.4rem;

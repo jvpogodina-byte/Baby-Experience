@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const links = [
   { href: "/", label: "Главная" },
-  { href: "/categories", label: "Подборки" }
+  { href: "/categories", label: "Подборки", isPrimary: true }
 ];
 
 export function SiteHeader() {
@@ -15,7 +15,7 @@ export function SiteHeader() {
         </Link>
         <nav className="nav" aria-label="Главная навигация">
           {links.map((link) => (
-            <Link key={link.href} href={link.href}>
+            <Link key={link.href} className={link.isPrimary ? "nav-link-primary" : undefined} href={link.href}>
               {link.label}
             </Link>
           ))}
